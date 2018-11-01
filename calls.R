@@ -16,8 +16,9 @@ source("support.R")
 #Temp method of loading data
 dataSet <- fetchData("Mockdata1.csv")
 
-my_mongo = mongo(url = "mongodb://pumi-4-1.tddc88-2018.ida.liu.se:27017/<Namn-på-vår-db>")
-#my_mongo$insert(dataSet)
+#my_mongo = mongo(url = "mongodb://pumi-4-1.tddc88-2018.ida.liu.se:27017/<Namn-på-vår-db>")
+mango = mongo(url = "mongodb+srv://pumtest-rbbbq.mongodb.net/test", "username", "passwordtest123")
+#mango$insert(dataSet)
 
 #Print the names of the attributes in the table specified by the input parameter
 printAttributes(dataSet)
