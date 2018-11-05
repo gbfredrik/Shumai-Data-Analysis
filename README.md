@@ -1,3 +1,12 @@
+Shumai Data Analysis Project
+Author: Fredrik Gerdin Börjesson
+
+
+File descriptions: 
+* installs.R: 
+* support.R: 
+* calls.R: 
+* analysis.R: 
 
 
 Help functions: 
