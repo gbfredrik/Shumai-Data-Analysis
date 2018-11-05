@@ -1,0 +1,59 @@
+---
+title: "Shumai User Interest Profiling"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows #def columns
+    vertical_layout: fill
+runtime: shiny
+---
+
+Sidebar {.sidebar}
+=====================================
+
+```{r setup, include=TRUE}
+source("../installs.R")
+library(flexdashboard)
+library(d3heatmap)
+library(knitr)
+source("../test.R")
+```
+
+Page 1
+=====================================
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart 1A
+
+```{r}
+
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Chart 1B
+
+```{r}#https://cran.r-project.org/web/packages/d3heatmap/d3heatmap.pdf
+d3heatmap(dt1, scale = "none", dendrogram = "none", colors = "Blues", show_grid = FALSE, Rowv = FALSE)
+
+```
+
+### Chart 1C
+
+```{r}
+
+```
+
+Page 1
+=====================================
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart 2A
+
+```{r}
+
+```

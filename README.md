@@ -1,5 +1,5 @@
-Shumai Data Analysis Project
-Author: Fredrik Gerdin Börjesson
+# Shumai Data Analysis Project
+## Author: Fredrik Gerdin Börjesson
 
 
 File descriptions: 
