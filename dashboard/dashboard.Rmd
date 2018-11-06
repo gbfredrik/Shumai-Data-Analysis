@@ -7,20 +7,47 @@ output:
 runtime: shiny
 ---
 
-Sidebar {.sidebar}
-=====================================
-
-```{r setup, include=TRUE}
+```{r setup, include=FALSE}
 source("../setup.R")
 library(flexdashboard)
-#library(mongolite)
+library(mongolite)
 library(d3heatmap)
 library(knitr)
+library(shiny)
 source("../test.R")
 ```
 
+
+Setup
+=====================================
+
+[//]: # (Column {data-width=650})
+-----------------------------------------------------------------------
+
+### Setup View
+
+```{r echo = FALSE}
+textInput("db.user.name", label = h3("Username"), value = "Enter DB Username...")
+textInput("db.pass", label = h3("Password"), value = "Enter DB Password...")
+
+hr()
+
+```
+
+
 Page 1
 =====================================
+Sidebar1 {.sidebar}
+-----------------------------------------------------------------------
+
+```{r echo = FALSE}
+dateRangeInput('dateRange',
+      label = 'Date range input: yyyy-mm-dd',
+      start = Sys.Date() - 7, end = Sys.Date(),
+      max = Sys.Date()
+    )
+```
+
 
 Column {data-width=650}
 -----------------------------------------------------------------------
@@ -28,7 +55,9 @@ Column {data-width=650}
 ### Chart 1A
 
 ```{r}
+#https://cran.r-project.org/web/packages/d3heatmap/d3heatmap.pdf
 
+d3heatmap(dt1, scale = "none", dendrogram = "none", colors = "Blues", show_grid = FALSE, Rowv = FALSE)
 ```
 
 Column {data-width=350}
@@ -36,8 +65,7 @@ Column {data-width=350}
 
 ### Chart 1B
 
-```{r}#https://cran.r-project.org/web/packages/d3heatmap/d3heatmap.pdf
-d3heatmap(dt1, scale = "none", dendrogram = "none", colors = "Blues", show_grid = FALSE, Rowv = FALSE)
+```{r}
 
 ```
 
@@ -46,6 +74,7 @@ d3heatmap(dt1, scale = "none", dendrogram = "none", colors = "Blues", show_grid 
 ```{r}
 
 ```
+
 
 Page 2
 =====================================

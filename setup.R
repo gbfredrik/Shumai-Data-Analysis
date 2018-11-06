@@ -1,7 +1,12 @@
 #This script installs and adds the required packages to the project library
 
 #Install a list of required packages.
-install.packages(c("mongolite", "flexdashboard", "d3heatmap"), quiet = FALSE, repos = "http://cran.us.r-project.org")
+#Method used: https://stackoverflow.com/questions/4090169/elegant-way-to-check-for-missing-packages-and-install-them
+list.of.packages <- c("mongolite", "flexdashboard", "d3heatmap")
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[, "Package"])]
+if (length(new.packages)) install.packages(new.packages, quiet = FALSE, repos = "http://cran.us.r-project.org")
+#install.packages(c("mongolite", "flexdashboard", "d3heatmap"), quiet = FALSE, repos = "http://cran.us.r-project.org", force = FALSE)
+
 
 #Loads the namespaces of each package. Can only load/attach INSTALLED packages, handled above in this file!
-library(mongolite)
+#library(mongolite)
