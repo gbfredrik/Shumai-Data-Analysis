@@ -1,5 +1,5 @@
 #Installs and adds the required packages to the project library
-source("installs.R")
+source("setup.R")
 
 
 #Load the built functions from separate files

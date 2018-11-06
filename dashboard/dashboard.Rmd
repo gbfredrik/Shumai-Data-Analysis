@@ -11,7 +11,7 @@ Sidebar {.sidebar}
 =====================================
 
 ```{r setup, include=TRUE}
-source("../installs.R")
+source("../setup.R")
 library(flexdashboard)
 library(d3heatmap)
 library(knitr)
