@@ -15,6 +15,7 @@ library(d3heatmap)
 library(knitr)
 library(shiny)
 source("../test.R")
+source("../support.R")
 ```
 
 
@@ -24,28 +25,43 @@ Setup
 [//]: # (Column {data-width=650})
 -----------------------------------------------------------------------
 
-### Setup View
+### Setup Window
 
 ```{r echo = FALSE}
 textInput("db.user.name", label = h3("Username"), value = "Enter DB Username...")
 textInput("db.pass", label = h3("Password"), value = "Enter DB Password...")
+actionButton("ConnectToDB", "Connect To Database")
+actionButton("DisconnectFromDB", "Disconnect From Database")
+
+observeEvent(input$ConnectToDB, {
+  print("ConnectToDB button pressed")
+  mango <- DBConnect(input$db.user.name, input$db.pass)
+})
+
+observeEvent(input$DisconnectFromDB, {
+  print("DisconnectFromDB button pressed")
+  DBDisconnect(mango)
+})
 
 hr()
-
 ```
 
-
-Page 1
+Trends
 =====================================
-Sidebar1 {.sidebar}
+Settings {.sidebar}
 -----------------------------------------------------------------------
-
+#### Time period
 ```{r echo = FALSE}
 dateRangeInput('dateRange',
       label = 'Date range input: yyyy-mm-dd',
       start = Sys.Date() - 7, end = Sys.Date(),
       max = Sys.Date()
     )
+```
+
+#### Categories
+```{r}
+
 ```
 
 
@@ -76,13 +92,35 @@ Column {data-width=350}
 ```
 
 
-Page 2
+Statistics
 =====================================
+
+Row
+-----------------------------------------------------------------------
+### Unique users {.value-box}
+
+```{r}
+# usrCount is a reactive expression that keeps an approximate
+# count of all of the unique users that have been seen since the
+# app started.
+usrCount <- ncol(dt1)
+# Emit the user count
+renderValueBox({
+  valueBox(value = usrCount, icon = icon("table", lib = "font-awesome"))
+})
+```
+
+### Total video views {.value-box}
+```{r}
+renderValueBox({
+  valueBox(value = 13000, icon = icon("user", lib = "glyphicon"))
+})
+```
 
 Column {data-width=650}
 -----------------------------------------------------------------------
 
-### Chart 2A
+### User Interest Statistics
 
 ```{r}
 
