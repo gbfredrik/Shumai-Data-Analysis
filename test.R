@@ -2,3 +2,6 @@ dt <- data.frame(row.names = c("user1", "user2"), v.pol = c(34, 97), v.news = c(
 
 dt1 <- dt
 dt1 <- apply(dt[1:4], MARGIN=1, FUN = function(X)(X - min(X))/diff(range(X)))
+
+library(d3heatmap)
+d3heatmap(dt1, scale = "none", dendrogram = "none", colors = "Blues", show_grid = FALSE, Rowv = FALSE)

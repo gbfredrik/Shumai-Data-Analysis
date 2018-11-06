@@ -13,6 +13,7 @@ Sidebar {.sidebar}
 ```{r setup, include=TRUE}
 source("../setup.R")
 library(flexdashboard)
+#library(mongolite)
 library(d3heatmap)
 library(knitr)
 source("../test.R")
@@ -46,7 +47,7 @@ d3heatmap(dt1, scale = "none", dendrogram = "none", colors = "Blues", show_grid 
 
 ```
 
-Page 1
+Page 2
 =====================================
 
 Column {data-width=650}
