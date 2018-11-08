@@ -59,13 +59,56 @@ dateRangeInput('dateRange',
 
 #### Categories
 ```{r}
+category.list.names <- c("Animals", "Cars", "Celeb", "Comedy & Entertainment", "Creative", "Education", "Gaming", "Kids", "Lifestyle & How-to", "Movies", "Music", "News", "Sports", "Tech", "Travel", "TV", "Webcam")
+category.list.id <- tolower(category.list.names)
 
+#lapply(seq(category.list.id), function(i) {
+  #sliderInput(inputId = paste0("range", category.list.id[i]),
+  #            label = category.list.names[i],
+  #            min = 0, max = 1, value = c(0, 1))
+#})
+
+sliderInput(inputId = "range.animals", label = "Animals",
+            min = 0, max = 1, value = c(0, 1))
+sliderInput(inputId = "range.cars", label = "Cars",
+            min = 0, max = 1, value = c(0, 1))
+sliderInput(inputId = "range.celeb", label = "Celeb",
+            min = 0, max = 1, value = c(0, 1))
+sliderInput(inputId = "range.comedy.entertainment", label = "Comedy & Entertainment",
+            min = 0, max = 1, value = c(0, 1))
+sliderInput(inputId = "range.creative", label = "Creative",
+            min = 0, max = 1, value = c(0, 1))
+sliderInput(inputId = "range.education", label = "Education",
+            min = 0, max = 1, value = c(0, 1))
+sliderInput(inputId = "range.gaming", label = "Gaming",
+            min = 0, max = 1, value = c(0, 1))
+sliderInput(inputId = "range.kids", label = "Kids",
+            min = 0, max = 1, value = c(0, 1))
+sliderInput(inputId = "range.lifestyle.how-to", label = "Lifestyle & How-to",
+            min = 0, max = 1, value = c(0, 1))
+sliderInput(inputId = "range.movies", label = "Movies",
+            min = 0, max = 1, value = c(0, 1))
+sliderInput(inputId = "range.music", label = "Music",
+            min = 0, max = 1, value = c(0, 1))
+sliderInput(inputId = "range.news", label = "News",
+            min = 0, max = 1, value = c(0, 1))
+sliderInput(inputId = "range.sports", label = "Sports",
+            min = 0, max = 1, value = c(0, 1))
+sliderInput(inputId = "range.tech", label = "Tech",
+            min = 0, max = 1, value = c(0, 1))
+sliderInput(inputId = "range.travel", label = "Travel",
+            min = 0, max = 1, value = c(0, 1))
+sliderInput(inputId = "range.tv", label = "TV",
+            min = 0, max = 1, value = c(0, 1))
+sliderInput(inputId = "range.webcam", label = "Webcam",
+            min = 0, max = 1, value = c(0, 1))
 hr()
 ```
 
 #### Export
 ```{r}
 actionButton("ExportFilteredUsers", "Export current filtering")
+hr()
 ```
 
 
@@ -87,7 +130,7 @@ Column {data-width=350}
 ### Chart 1B
 
 ```{r}
-
+print("Histogram")
 ```
 
 ### Chart 1C

@@ -21,3 +21,16 @@ library(ggridges)
 #  scale_x_discrete(expand = c(0, 0))
 
 # channel.df <- ImportJSON()
+
+#channel.df[]$list$name
+#category.list.names <- c("Animals", "Cars", "Celeb", "Comedy & Entertainment", "Creative", "Education", "Gaming", "Kids", "Lifestyle & How-to", "Movies", "Music", "News", "Sports", "Tech", "Travel", "TV", "Webcam")
+#category.list.id <- tolower(category.list.names)
+
+
+library(shiny)
+#lapply(seq(category.list.id), function(i) {
+#  sliderInput(inputId = paste0("range.", category.list.id[i]),
+#              label = category.list.names[i],
+#              min = 0, max = 1, 
+#              value = c(0, 1))
+#})
