@@ -3,5 +3,21 @@ dt <- data.frame(row.names = c("user1", "user2"), v.pol = c(34, 97), v.news = c(
 dt1 <- dt
 dt1 <- apply(dt[1:4], MARGIN=1, FUN = function(X)(X - min(X))/diff(range(X)))
 
-library(d3heatmap)
-d3heatmap(dt1, scale = "none", dendrogram = "none", colors = "Blues", show_grid = FALSE, Rowv = FALSE)
+#library(d3heatmap)
+#d3heatmap(dt1, scale = "none", dendrogram = "none", colors = "Blues", show_grid = FALSE, Rowv = FALSE)
+
+df <- data.frame(replicate(10,sample(0:1000,1000,rep=TRUE)))
+dfscaled <- apply(df[1:10], MARGIN=1, FUN = function(X)(X - min(X))/diff(range(X)))
+
+dfscaled2 <- data.frame(dfscaled)
+
+library(ggplot2)
+library(ggridges)
+#ggplot(dfscaled2, aes(x = 1, y = 1))
+
+#ggplot(dfscaled2, aes(x = Interest, y = Category)) +
+#  geom_density_ridges(scale = 4) + theme_ridges +
+#  scale_y_discrete(expand = c(0.01, 0)) +
+#  scale_x_discrete(expand = c(0, 0))
+
+# channel.df <- ImportJSON()

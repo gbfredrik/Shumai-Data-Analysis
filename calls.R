@@ -11,7 +11,7 @@ data.set <- FetchData("Mockdata1.csv")
 #Print the names of the attributes in the table specified by the input parameter
 PrintAttributes(data.set)
 
-mango <- DBConnect()
+mango <- DBConnect(user, pass)
 DBDisconnect(mango)
 #mango$insert(data.set)
 
@@ -23,4 +23,5 @@ dt1 <- dt
 dt1 <- apply(dt[1:4], MARGIN=1, FUN = function(X)(X - min(X))/diff(range(X)))
 dt1[]
 
-
+df <- data.frame(replicate(10,sample(0:1000,1000,rep=TRUE)))
+dfscaled <- apply(df[1:4], MARGIN=1, FUN = function(X)(X - min(X))/diff(range(X)))

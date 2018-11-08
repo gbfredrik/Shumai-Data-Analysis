@@ -21,3 +21,10 @@ DBDisconnect <- function(db.env) {
 DBPrintAll <- function(db.env) {
   db.env$find('{}')
 }
+
+ImportJSON <- function() {
+  selected.file <- file.choose()
+  print(selected.file)
+  channel.df <- fromJSON(selected.file)
+  return(channel.df)
+}
