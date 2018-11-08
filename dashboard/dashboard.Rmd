@@ -1,0 +1,157 @@
+---
+title: "Shumai User Interest Profiling"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows #def columns
+    vertical_layout: fill
+runtime: shiny
+---
+
+```{r setup, include = FALSE}
+source("../setup.R")
+source("../test.R")
+source("../support.R")
+```
+
+
+Setup
+=====================================
+
+[//]: # (Column {data-width=650})
+-----------------------------------------------------------------------
+
+### Setup Window
+NOTE: Buttons and filters are not fully implemented yet and have thus been disabled.
+```{r echo = FALSE}
+
+hr()
+textInput("db.user.name", label = h3("Username"), value = "Enter DB Username...")
+textInput("db.pass", label = h3("Password"), value = "Enter DB Password...")
+actionButton("ConnectToDB", "Connect To Database")
+actionButton("DisconnectFromDB", "Disconnect From Database")
+
+observeEvent(input$ConnectToDB, {
+  print("ConnectToDB button pressed")
+  #mango <- DBConnect(input$db.user.name, input$db.pass)
+})
+
+observeEvent(input$DisconnectFromDB, {
+  print("DisconnectFromDB button pressed")
+  #DBDisconnect(mango)
+})
+
+hr()
+```
+
+Trends
+=====================================
+Settings {.sidebar}
+-----------------------------------------------------------------------
+#### Time period
+Select the time period to analyze.
+```{r echo = FALSE}
+dateRangeInput('dateRange',
+      label = 'Date range input: yyyy-mm-dd',
+      start = Sys.Date() - 7, end = Sys.Date(),
+      max = Sys.Date()
+    )
+```
+
+#### Categories
+```{r}
+
+hr()
+```
+
+#### Export
+```{r}
+actionButton("ExportFilteredUsers", "Export current filtering")
+```
+
+
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart 1A
+
+```{r}
+#https://cran.r-project.org/web/packages/d3heatmap/d3heatmap.pdf
+
+d3heatmap(dt1, scale = "none", dendrogram = "none", colors = "Blues", show_grid = FALSE, Rowv = FALSE)
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Chart 1B
+
+```{r}
+
+```
+
+### Chart 1C
+
+```{r}
+
+```
+
+
+Statistics
+=====================================
+
+Row
+-----------------------------------------------------------------------
+### Unique users {.value-box}
+
+```{r}
+# usrCount is a reactive expression that keeps an approximate
+# count of all of the unique users that have been seen since the
+# app started.
+usrCount <- ncol(dfscaled)
+renderValueBox({
+  valueBox(value = usrCount, icon = "glyphicon-user")
+})
+```
+
+### Total video views {.value-box}
+```{r}
+renderValueBox({
+  views <- 123456
+  valueBox(value = views, icon = "glyphicon-play")
+})
+```
+
+### Average total daily views {.value-box}
+```{r}
+renderValueBox({
+  valueBox(value = 123, icon = "glyphicon-eye-open")
+})
+```
+
+Row
+-----------------------------------------------------------------------
+### Most popular category {.value-box}
+```{r}
+renderValueBox({
+  valueBox(value = "Memes", color = "Green", icon = "glyphicon-thumbs-up")
+})
+```
+
+### Least popular category {.value-box}
+```{r}
+renderValueBox({
+  valueBox(value = "News", color = "Maroon", icon = "glyphicon-thumbs-down")
+})
+```
+
+
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### User Interest Statistics
+
+```{r}
+
+```
