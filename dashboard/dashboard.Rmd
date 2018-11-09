@@ -23,11 +23,11 @@ Setup
 ### Setup Window
 NOTE: Buttons and filters are not fully implemented yet and have thus been disabled.
 ```{r echo = FALSE}
-
 hr()
 textInput("db.user.name", label = h3("Username"), value = "Enter DB Username...")
 textInput("db.pass", label = h3("Password"), value = "Enter DB Password...")
 actionButton("ConnectToDB", "Connect To Database")
+hr()
 actionButton("DisconnectFromDB", "Disconnect From Database")
 
 observeEvent(input$ConnectToDB, {
@@ -108,16 +108,19 @@ hr()
 #### Export
 ```{r}
 actionButton("ExportFilteredUsers", "Export current filtering")
+
+observeEvent(input$ExportFilteredUsers, {
+  print("ExportFilteredUsers button pressed")
+  # TODO: Call function in support.R
+})
 hr()
 ```
-
 
 
 Column {data-width=650}
 -----------------------------------------------------------------------
 
 ### Chart 1A
-
 ```{r}
 #https://cran.r-project.org/web/packages/d3heatmap/d3heatmap.pdf
 
@@ -128,15 +131,15 @@ Column {data-width=350}
 -----------------------------------------------------------------------
 
 ### Chart 1B
-
 ```{r}
 print("Histogram")
 ```
 
 ### Chart 1C
-
 ```{r}
-
+#print("Ggridge")
+ggplot(df.stack, aes(x = values, y = ind)) +
+  geom_density_ridges(aes(group = ind, color = ind), alpha = 0.3)
 ```
 
 
@@ -194,7 +197,25 @@ Column {data-width=650}
 -----------------------------------------------------------------------
 
 ### User Interest Statistics
-
 ```{r}
+# UI function
+worldPhonesUI <- function(id) {
+  ns <- NS(id)
+  fillCol(height = 600, flex = c(NA, 1), 
+    inputPanel(
+      selectInput(ns("region"), "Region:", choices = colnames(WorldPhones))
+    ),
+    plotOutput(ns("phonePlot"), height = "100%")
+  )
+}
 
+# Server function
+worldPhones <- function(input, output, session) {
+  output$phonePlot <- renderPlot({
+    barplot(WorldPhones[,input$region]*1000, 
+            ylab = "Number of Telephones", xlab = "Year")
+  })
+}
+worldPhonesUI("phones")
+callModule(worldPhones, "phones")
 ```

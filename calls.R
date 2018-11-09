@@ -24,4 +24,10 @@ dt1 <- apply(dt[1:4], MARGIN=1, FUN = function(X)(X - min(X))/diff(range(X)))
 dt1[]
 
 df <- data.frame(replicate(10,sample(0:1000,1000,rep=TRUE)))
-dfscaled <- apply(df[1:4], MARGIN=1, FUN = function(X)(X - min(X))/diff(range(X)))
+dfscaled <- apply(df[1:10], MARGIN=1, FUN = function(X)(X - min(X))/diff(range(X)))
+dfscaled2 <- data.frame(t(dfscaled))
+
+dfcopy <- dfscaled2
+
+dfcopy <- dfcopy[dfcopy$X2 <= 0.1 & dfcopy$X1 == 1, ]
+subset(dfscaled2, X1 == 1)

@@ -9,16 +9,15 @@ dt1 <- apply(dt[1:4], MARGIN=1, FUN = function(X)(X - min(X))/diff(range(X)))
 df <- data.frame(replicate(10,sample(0:1000,1000,rep=TRUE)))
 dfscaled <- apply(df[1:10], MARGIN=1, FUN = function(X)(X - min(X))/diff(range(X)))
 
-dfscaled2 <- data.frame(dfscaled)
+dfscaled2 <- data.frame(t(dfscaled))
+df.stack <- stack(dfscaled2)
 
 library(ggplot2)
 library(ggridges)
-#ggplot(dfscaled2, aes(x = 1, y = 1))
+#ggplot(df.stack, aes(x = values, y = ind)) +
+#  geom_density_ridges(aes(group = ind, color = ind), alpha = 0.3)
 
-#ggplot(dfscaled2, aes(x = Interest, y = Category)) +
-#  geom_density_ridges(scale = 4) + theme_ridges +
-#  scale_y_discrete(expand = c(0.01, 0)) +
-#  scale_x_discrete(expand = c(0, 0))
+
 
 # channel.df <- ImportJSON()
 
@@ -27,7 +26,6 @@ library(ggridges)
 #category.list.id <- tolower(category.list.names)
 
 
-library(shiny)
 #lapply(seq(category.list.id), function(i) {
 #  sliderInput(inputId = paste0("range.", category.list.id[i]),
 #              label = category.list.names[i],
