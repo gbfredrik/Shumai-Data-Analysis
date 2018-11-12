@@ -12,10 +12,6 @@ dfscaled <- apply(df[1:10], MARGIN=1, FUN = function(X)(X - min(X))/diff(range(X
 dfscaled2 <- data.frame(t(dfscaled))
 df.stack <- stack(dfscaled2)
 
-library(ggplot2)
-library(ggridges)
-#ggplot(df.stack, aes(x = values, y = ind)) +
-#  geom_density_ridges(aes(group = ind, color = ind), alpha = 0.3)
 
 
 
@@ -24,11 +20,3 @@ library(ggridges)
 #channel.df[]$list$name
 #category.list.names <- c("Animals", "Cars", "Celeb", "Comedy & Entertainment", "Creative", "Education", "Gaming", "Kids", "Lifestyle & How-to", "Movies", "Music", "News", "Sports", "Tech", "Travel", "TV", "Webcam")
 #category.list.id <- tolower(category.list.names)
-
-
-#lapply(seq(category.list.id), function(i) {
-#  sliderInput(inputId = paste0("range.", category.list.id[i]),
-#              label = category.list.names[i],
-#              min = 0, max = 1, 
-#              value = c(0, 1))
-#})

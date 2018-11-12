@@ -24,20 +24,15 @@ Setup
 NOTE: Buttons and filters are not fully implemented yet and have thus been disabled.
 ```{r echo = FALSE}
 hr()
-textInput("db.user.name", label = h3("Username"), value = "Enter DB Username...")
-textInput("db.pass", label = h3("Password"), value = "Enter DB Password...")
-actionButton("ConnectToDB", "Connect To Database")
+textInput("db.get.link", label = h3("DB Link"), value = "pumi-4-1.tddc88-2018.ida.liu.se:8085/api/user")
+actionButton("getDB", "Fetch User Database")
 hr()
-actionButton("DisconnectFromDB", "Disconnect From Database")
 
-observeEvent(input$ConnectToDB, {
-  print("ConnectToDB button pressed")
-  #mango <- DBConnect(input$db.user.name, input$db.pass)
-})
-
-observeEvent(input$DisconnectFromDB, {
-  print("DisconnectFromDB button pressed")
-  #DBDisconnect(mango)
+user.db <- eventReactive(input$getDB, {
+  print("getDB button pressed")
+  channel.df <- ImportJSON(input$db.get.link)
+  print(channel.df)
+  return(channel.df)
 })
 
 hr()
