@@ -9,30 +9,30 @@ runtime: shiny
 
 ```{r setup, include = FALSE}
 source("../setup.R")
-source("../test.R")
+#source("../test.R")
 source("../support.R")
+values <- reactiveValues()
 ```
 
 
 Setup
 =====================================
 
-[//]: # (Column {data-width=650})
 -----------------------------------------------------------------------
 
 ### Setup Window
-NOTE: Buttons and filters are not fully implemented yet and have thus been disabled.
+Please retrieve the user database first.
 ```{r echo = FALSE}
 hr()
 textInput("db.get.link", label = h3("DB Link"), value = "pumi-4-1.tddc88-2018.ida.liu.se:8085/api/user")
-actionButton("getDB", "Fetch User Database")
-hr()
+actionButton("buttonGetDB", "Fetch User Database")
 
-user.db <- eventReactive(input$getDB, {
-  print("getDB button pressed")
+#fetchDB <- eventReactive(input$buttonGetDB, {
+observeEvent(input$buttonGetDB,  {
+  print("buttonGetDB pressed")
   channel.df <- ImportJSON(input$db.get.link)
-  print(channel.df)
-  return(channel.df)
+  values$raw.data <- channel.df
+  print(colnames(values$raw.data))
 })
 
 hr()
@@ -102,10 +102,10 @@ hr()
 
 #### Export
 ```{r}
-actionButton("ExportFilteredUsers", "Export current filtering")
+actionButton("buttonExportFilteredUsers", "Export current filtering")
 
 observeEvent(input$ExportFilteredUsers, {
-  print("ExportFilteredUsers button pressed")
+  print("buttonExportFilteredUsers pressed")
   # TODO: Call function in support.R
 })
 hr()
@@ -115,26 +115,27 @@ hr()
 Column {data-width=650}
 -----------------------------------------------------------------------
 
-### Chart 1A
+### Chart Heatmap
 ```{r}
 #https://cran.r-project.org/web/packages/d3heatmap/d3heatmap.pdf
-
-d3heatmap(dt1, scale = "none", dendrogram = "none", colors = "Blues", show_grid = FALSE, Rowv = FALSE)
+print("Heatmap")
+#d3heatmap(dt1, scale = "none", dendrogram = "none", colors = "Blues", show_grid = FALSE, Rowv = FALSE)
 ```
 
 Column {data-width=350}
 -----------------------------------------------------------------------
 
-### Chart 1B
+### Chart Histogram
 ```{r}
 print("Histogram")
+
 ```
 
-### Chart 1C
+### Chart Ridge
 ```{r}
-#print("Ggridge")
-ggplot(df.stack, aes(x = values, y = ind)) +
-  geom_density_ridges(aes(group = ind, color = ind), alpha = 0.3)
+print("Ggridge")
+#ggplot(df.stack, aes(x = values, y = ind)) +
+#  geom_density_ridges(aes(group = ind, color = ind), alpha = 0.3)
 ```
 
 
@@ -143,13 +144,13 @@ Statistics
 
 Row
 -----------------------------------------------------------------------
-### Unique users {.value-box}
 
+### Unique users {.value-box}
 ```{r}
 # usrCount is a reactive expression that keeps an approximate
 # count of all of the unique users that have been seen since the
 # app started.
-usrCount <- ncol(dfscaled)
+usrCount <- 13
 renderValueBox({
   valueBox(value = usrCount, icon = "glyphicon-user")
 })
@@ -194,23 +195,23 @@ Column {data-width=650}
 ### User Interest Statistics
 ```{r}
 # UI function
-worldPhonesUI <- function(id) {
-  ns <- NS(id)
-  fillCol(height = 600, flex = c(NA, 1), 
-    inputPanel(
-      selectInput(ns("region"), "Region:", choices = colnames(WorldPhones))
-    ),
-    plotOutput(ns("phonePlot"), height = "100%")
-  )
-}
+#worldPhonesUI <- function(id) {
+#  ns <- NS(id)
+#  fillCol(height = 600, flex = c(NA, 1), 
+#    inputPanel(
+#      selectInput(ns("region"), "Region:", choices = colnames(WorldPhones))
+#    ),
+#    plotOutput(ns("phonePlot"), height = "100%")
+#  )
+#}
 
 # Server function
-worldPhones <- function(input, output, session) {
-  output$phonePlot <- renderPlot({
-    barplot(WorldPhones[,input$region]*1000, 
-            ylab = "Number of Telephones", xlab = "Year")
-  })
-}
-worldPhonesUI("phones")
-callModule(worldPhones, "phones")
+#worldPhones <- function(input, output, session) {
+#  output$phonePlot <- renderPlot({
+#    barplot(WorldPhones[,input$region]*1000, 
+#            ylab = "Number of Telephones", xlab = "Year")
+#  })
+#}
+#worldPhonesUI("phones")
+#callModule(worldPhones, "phones")
 ```

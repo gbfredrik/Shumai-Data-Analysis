@@ -2,7 +2,7 @@
 
 #Install a list of required packages.
 #Method used: https://stackoverflow.com/questions/4090169/elegant-way-to-check-for-missing-packages-and-install-them
-list.of.packages <- c("mongolite", "flexdashboard", "d3heatmap", "ggridges", "jsonlite")
+list.of.packages <- c("mongolite", "flexdashboard", "d3heatmap", "ggridges", "jsonlite", "curl")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[, "Package"])]
 if (length(new.packages)) install.packages(new.packages, quiet = FALSE, repos = "http://cran.us.r-project.org")
 
@@ -16,3 +16,4 @@ library(shiny)
 library(ggridges)
 library(jsonlite)
 library(ggplot2)
+library(curl)

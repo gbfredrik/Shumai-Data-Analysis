@@ -1,2 +1,6 @@
 TODO
 
+1. Göra klart get-knapp
+2. Göraklart datumfiltrering
+3. Göra klart kategori-filtrering
+4. Fixa knapp för att exportera filtrerad lista

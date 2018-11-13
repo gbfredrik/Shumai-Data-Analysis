@@ -4,16 +4,6 @@ source("setup.R")
 
 #Load the built functions from separate files
 source("analysis.R")
-source("support.R")
-
-#Temp method of loading data
-data.set <- FetchData("Mockdata1.csv")
-#Print the names of the attributes in the table specified by the input parameter
-PrintAttributes(data.set)
-
-mango <- DBConnect(user, pass)
-DBDisconnect(mango)
-#mango$insert(data.set)
 
 gdpr.TRUE <- data.set[GDPR_consent == TRUE]
 
