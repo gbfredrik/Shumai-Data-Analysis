@@ -27,7 +27,4 @@ for (temp in 1:27) {
 
 
 
-dates <- c("", "", "")
-l = list(a = c(2, 3, 1, 5, 1), b = c(4, 3, 3, 5, 2), c = c(5, 1, 3, 2, 4))
-
 # dates <- lapply(views[], FUN = function(X)as.Date(substring(X, 0, 10)))
