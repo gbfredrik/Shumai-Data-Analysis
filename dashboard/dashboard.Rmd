@@ -63,51 +63,65 @@ category.list.id <- tolower(category.list.names)
   #            min = 0, max = 1, value = c(0, 1))
 #})
 
-sliderInput(inputId = "range.animals", label = "Animals",
+sliderInput(inputId = "range.animals", label = category.list.names[1],
             min = 0, max = 1, value = c(0, 1))
-sliderInput(inputId = "range.cars", label = "Cars",
+sliderInput(inputId = "range.cars", label = category.list.names[2],
             min = 0, max = 1, value = c(0, 1))
-sliderInput(inputId = "range.celeb", label = "Celeb",
+sliderInput(inputId = "range.celeb", label = category.list.names[3],
             min = 0, max = 1, value = c(0, 1))
-sliderInput(inputId = "range.comedy.entertainment", label = "Comedy & Entertainment",
+sliderInput(inputId = "range.comedy.entertainment", label = category.list.names[4],
             min = 0, max = 1, value = c(0, 1))
-sliderInput(inputId = "range.creative", label = "Creative",
+sliderInput(inputId = "range.creative", label = category.list.names[5],
             min = 0, max = 1, value = c(0, 1))
-sliderInput(inputId = "range.education", label = "Education",
+sliderInput(inputId = "range.education", label = category.list.names[6],
             min = 0, max = 1, value = c(0, 1))
-sliderInput(inputId = "range.gaming", label = "Gaming",
+sliderInput(inputId = "range.gaming", label = category.list.names[7],
             min = 0, max = 1, value = c(0, 1))
-sliderInput(inputId = "range.kids", label = "Kids",
+sliderInput(inputId = "range.kids", label = category.list.names[8],
             min = 0, max = 1, value = c(0, 1))
-sliderInput(inputId = "range.lifestyle.how-to", label = "Lifestyle & How-to",
+sliderInput(inputId = "range.lifestyle.how-to", label = category.list.names[9],
             min = 0, max = 1, value = c(0, 1))
-sliderInput(inputId = "range.movies", label = "Movies",
+sliderInput(inputId = "range.movies", label = category.list.names[10],
             min = 0, max = 1, value = c(0, 1))
-sliderInput(inputId = "range.music", label = "Music",
+sliderInput(inputId = "range.music", label = category.list.names[11],
             min = 0, max = 1, value = c(0, 1))
-sliderInput(inputId = "range.news", label = "News",
+sliderInput(inputId = "range.news", label = category.list.names[12],
             min = 0, max = 1, value = c(0, 1))
-sliderInput(inputId = "range.sports", label = "Sports",
+sliderInput(inputId = "range.sports", label = category.list.names[13],
             min = 0, max = 1, value = c(0, 1))
-sliderInput(inputId = "range.tech", label = "Tech",
+sliderInput(inputId = "range.tech", label = category.list.names[14],
             min = 0, max = 1, value = c(0, 1))
-sliderInput(inputId = "range.travel", label = "Travel",
+sliderInput(inputId = "range.travel", label = category.list.names[15],
             min = 0, max = 1, value = c(0, 1))
-sliderInput(inputId = "range.tv", label = "TV",
+sliderInput(inputId = "range.tv", label = category.list.names[16],
             min = 0, max = 1, value = c(0, 1))
-sliderInput(inputId = "range.webcam", label = "Webcam",
+sliderInput(inputId = "range.webcam", label = category.list.names[17],
             min = 0, max = 1, value = c(0, 1))
 hr()
 ```
 
 #### Export
 ```{r}
-actionButton("buttonExportFilteredUsers", "Export current filtering")
-
-observeEvent(input$ExportFilteredUsers, {
-  print("buttonExportFilteredUsers pressed")
-  # TODO: Call function in support.R
-})
+# TODO
+shinyApp( # NOT WORKING
+  ui <- fillPage(
+    inputPanel(
+      downloadButton("buttonExportFilteredUsers", "Export current filtering")
+    )
+  ),
+  
+  server <- function(input, output) {
+    output$buttonExportFilteredUsers <- downloadHandler(
+      filename = function() {
+        #paste("Filtered users", Sys.Date(), ".csv", sep = "")
+        "hej.csv"
+      },
+      content = function(file) {
+        write.csv(values@raw.data, file)
+      }
+    )
+  }
+)
 hr()
 ```
 
@@ -147,26 +161,27 @@ Row
 
 ### Unique users {.value-box}
 ```{r}
-# usrCount is a reactive expression that keeps an approximate
+# total.user.count is a reactive expression that keeps an approximate
 # count of all of the unique users that have been seen since the
-# app started.
-usrCount <- 13
+# app started. Includes the default user.
 renderValueBox({
-  valueBox(value = usrCount, icon = "glyphicon-user")
+  total.user.count <- nrow(values$raw.data[1])
+  valueBox(value = total.user.count, icon = "glyphicon-user")
 })
 ```
 
 ### Total video views {.value-box}
 ```{r}
 renderValueBox({
-  views <- 123456
-  valueBox(value = views, icon = "glyphicon-play")
+  total.view.count <- 123456 #TODO
+  valueBox(value = total.view.count, icon = "glyphicon-play")
 })
 ```
 
 ### Average total daily views {.value-box}
 ```{r}
 renderValueBox({
+  
   valueBox(value = 123, icon = "glyphicon-eye-open")
 })
 ```
@@ -194,6 +209,9 @@ Column {data-width=650}
 
 ### User Interest Statistics
 ```{r}
+
+
+
 # UI function
 #worldPhonesUI <- function(id) {
 #  ns <- NS(id)

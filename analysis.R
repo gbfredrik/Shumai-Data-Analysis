@@ -10,9 +10,16 @@ FilterDates <- function(start.date, end.date) {
 }
 
 
-CountViews <- function(data.set) {
+CountViewsByDates <- function(data.set, start.date, end.date) {
+  #TODO
+  #new.set <- data.frame(user = character(0), view.counts = list(news = 0, tv = 0))
   
-  
+  for (i in 1:1) {
+    for (j in 1:27){
+      length(which(data.set$category_views[[i]][[j]] >= as.Date("2018-11-07")))
+    }
+  }
+  # return(new.set)
 }
 
 
