@@ -10,16 +10,29 @@ FilterDates <- function(start.date, end.date) {
 }
 
 
-CountViewsByDates <- function(data.set, start.date, end.date) {
-  #TODO
-  #new.set <- data.frame(user = character(0), view.counts = list(news = 0, tv = 0))
+CountViewsByDates <- function(data.set, dates) {
+  #TODO Fixa lite
   
-  for (i in 1:1) {
-    for (j in 1:27){
-      length(which(data.set$category_views[[i]][[j]] >= as.Date("2018-11-07")))
-    }
-  }
-  # return(new.set)
+  #print(dates)
+  #print(nrow(data.set))
+  names <- c("animals", "auto", "people", "fun", "creation", "school", "videogames", "kids", "lifestyle", "shortfilms", "music", "news", "sport", "tech", "travel", "tv", "webcam")
+  test.set <- data.frame(matrix(ncol = 17, nrow = nrow(data.set)))
+  colnames(test.set) <- names
+  rownames(test.set) <- data.set$user_name
+  #print(test.set)
+  
+  test.set[][] <- lapply(1:17, function(X) length(which(data.set$category_views[[X]][[1]] >= dates[1] & 
+                                                      data.set$category_views[[X]][[1]] <= dates[2])))
+  #print(test.set)
+  
+  #setNames(data.frame(matrix(ncol = 3, nrow = 0)), c("name", "age", "gender"))
+  
+  #lapply(data.set, function(x) length(which(data.set$category_views[][x] >= dates[1])))
+  
+  #for (i in 1:1) {
+  #  
+  #}
+  return(test.set)
 }
 
 

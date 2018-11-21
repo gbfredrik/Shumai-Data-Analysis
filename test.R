@@ -11,11 +11,18 @@ category.list.id <- c("animals", "auto", "people", "fun", "creation", "school", 
 
 source("setup.R")
 source("support.R")
+source("analysis.R")
 library(curl)
 link <- "http://pumi-4-1.tddc88-2018.ida.liu.se:8085/api/user"
 raw.data <- ImportJSON(link)
-data <- raw.data
-data$category_views <- list(data[6]$category_views[[1]]$viewed)
+
+lapply(1:17, function(X) length(which(raw.data$category_views[[X]][[1]] >= as.Date("2018-11-19"))))
+
+count.df <- CountViewsByDates(raw.data, c(as.Date("2018-11-17"), as.Date("2018-11-21")))
+
+
+#data <- raw.data
+#data$category_views <- list(data[6]$category_views[[1]]$viewed)
 
 scaleFunc <- function(x) {
   return(as.Date(substring(x, 0, 10)))

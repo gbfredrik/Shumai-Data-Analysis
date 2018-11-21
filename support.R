@@ -13,14 +13,14 @@ ImportJSON <- function(link) {
   data <- fromJSON(text)
   
   # Parse and convert dates
-  data$category_views <- list(data[6]$category_views[[1]]$viewed)
+  #data$category_views <- list(data[6]$category_views[[1]]$viewed)
   
   scaleFunc <- function(x) {
     return(as.Date(substring(x, 0, 10)))
   }
   
-  for (temp in 1:27) {
-    data$category_views[[1]][[temp]] <- lapply(data$category_views[[1]][[temp]], scaleFunc)
+  for (temp in 1:17) {
+    data$category_views[[temp]] <- lapply(data$category_views[[temp]], scaleFunc)
   }
   
   return(data)

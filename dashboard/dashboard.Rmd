@@ -9,7 +9,7 @@ runtime: shiny
 
 ```{r setup, include = FALSE}
 source("../setup.R")
-#source("../test.R")
+source("../analysis.R")
 source("../support.R")
 values <- reactiveValues()
 ```
@@ -32,7 +32,7 @@ observeEvent(input$buttonGetDB,  {
   print("buttonGetDB pressed")
   channel.df <- ImportJSON(input$db.get.link)
   values$raw.data <- channel.df
-  print(colnames(values$raw.data))
+  #print(colnames(values$raw.data))
 })
 
 hr()
@@ -50,19 +50,37 @@ dateRangeInput('dateRange',
       start = Sys.Date() - 7, end = Sys.Date(),
       max = Sys.Date()
     )
+
+observeEvent(input$dateRange, {
+  print(str(input$dateRange))
+  if (!is.null(values$raw.data)) {
+    values$filtered.view.data <- CountViewsByDates(values$raw.data, input$dateRange)
+    print(values$filtered.view.data)
+    values$normalized.data <- NormalizeData(values$filtered.view.data)
+    print(values$normalized.data)
+  }
+  },
+  ignoreInit = TRUE
+  )
 ```
 
 #### Categories
 ```{r}
 category.list.names <- c("Animals", "Cars", "Celeb", "Comedy & Entertainment", "Creative", "Education", "Gaming", "Kids", "Lifestyle & How-to", "Movies", "Music", "News", "Sports", "Tech", "Travel", "TV", "Webcam")
-category.list.id <- tolower(category.list.names)
+category.list.id <- c("animals", "auto", "people", "fun", "creation", "school", "videogames", "kids", "lifestyle", "shortfilms", "music", "news", "sport", "tech", "travel", "tv", "webcam")
 
-#lapply(seq(category.list.id), function(i) {
-  #sliderInput(inputId = paste0("range", category.list.id[i]),
-  #            label = category.list.names[i],
-  #            min = 0, max = 1, value = c(0, 1))
-#})
+# slidersUI <- function(id) {
+#   fluidRow(
+#       lapply(seq(category.list.id), function(i) {
+#       sliderInput(inputId = paste0("range.", category.list.id[i]),
+#       label = category.list.names[i],
+#       min = 0, max = 1, value = c(0, 1))
+#     })
+#   )
+# }
+# slidersUI("slide")
 
+#Ctrl + Shift + C för att kommentera block
 sliderInput(inputId = "range.animals", label = category.list.names[1],
             min = 0, max = 1, value = c(0, 1))
 sliderInput(inputId = "range.cars", label = category.list.names[2],
@@ -132,18 +150,16 @@ Column {data-width=650}
 ### Chart Heatmap
 ```{r}
 #https://cran.r-project.org/web/packages/d3heatmap/d3heatmap.pdf
-print("Heatmap")
-#d3heatmap(dt1, scale = "none", dendrogram = "none", colors = "Blues", show_grid = FALSE, Rowv = FALSE)
+print("bubbles/treemap")
+renderPlot({
+  if (!is.null(values$normalized.data)) {
+      d3heatmap(values$normalized.data, scale = "none", dendrogram = "none", colors = "Blues", show_grid = FALSE, Rowv = FALSE)
+  }
+})
 ```
 
 Column {data-width=350}
 -----------------------------------------------------------------------
-
-### Chart Histogram
-```{r}
-print("Histogram")
-
-```
 
 ### Chart Ridge
 ```{r}
@@ -191,6 +207,7 @@ Row
 ### Most popular category {.value-box}
 ```{r}
 renderValueBox({
+  
   valueBox(value = "Memes", color = "Green", icon = "glyphicon-thumbs-up")
 })
 ```
@@ -198,6 +215,7 @@ renderValueBox({
 ### Least popular category {.value-box}
 ```{r}
 renderValueBox({
+  
   valueBox(value = "News", color = "Maroon", icon = "glyphicon-thumbs-down")
 })
 ```
