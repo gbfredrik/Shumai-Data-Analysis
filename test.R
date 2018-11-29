@@ -18,7 +18,9 @@ raw.data <- ImportJSON(link)
 
 lapply(1:17, function(X) length(which(raw.data$category_views[[X]][[1]] >= as.Date("2018-11-19"))))
 
-count.df <- CountViewsByDates(raw.data, c(as.Date("2018-11-17"), as.Date("2018-11-21")))
+count.df <- CountViewsByDates(raw.data, c(as.Date("2018-11-22"), as.Date("2018-11-30")))
+
+NormalizeData(count.df)
 
 
 #data <- raw.data

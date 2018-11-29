@@ -52,12 +52,12 @@ dateRangeInput('dateRange',
     )
 
 observeEvent(input$dateRange, {
-  print(str(input$dateRange))
+  #print(str(input$dateRange))
   if (!is.null(values$raw.data)) {
     values$filtered.view.data <- CountViewsByDates(values$raw.data, input$dateRange)
-    print(values$filtered.view.data)
+    #print(values$filtered.view.data)
     values$normalized.data <- NormalizeData(values$filtered.view.data)
-    print(values$normalized.data)
+    #print(values$normalized.data)
   }
   },
   ignoreInit = TRUE
@@ -83,29 +83,29 @@ category.list.id <- c("animals", "auto", "people", "fun", "creation", "school", 
 #Ctrl + Shift + C för att kommentera block
 sliderInput(inputId = "range.animals", label = category.list.names[1],
             min = 0, max = 1, value = c(0, 1))
-sliderInput(inputId = "range.cars", label = category.list.names[2],
+sliderInput(inputId = "range.auto", label = category.list.names[2],
             min = 0, max = 1, value = c(0, 1))
-sliderInput(inputId = "range.celeb", label = category.list.names[3],
+sliderInput(inputId = "range.people", label = category.list.names[3],
             min = 0, max = 1, value = c(0, 1))
-sliderInput(inputId = "range.comedy.entertainment", label = category.list.names[4],
+sliderInput(inputId = "range.fun", label = category.list.names[4],
             min = 0, max = 1, value = c(0, 1))
-sliderInput(inputId = "range.creative", label = category.list.names[5],
+sliderInput(inputId = "range.creation", label = category.list.names[5],
             min = 0, max = 1, value = c(0, 1))
-sliderInput(inputId = "range.education", label = category.list.names[6],
+sliderInput(inputId = "range.school", label = category.list.names[6],
             min = 0, max = 1, value = c(0, 1))
-sliderInput(inputId = "range.gaming", label = category.list.names[7],
+sliderInput(inputId = "range.videogames", label = category.list.names[7],
             min = 0, max = 1, value = c(0, 1))
 sliderInput(inputId = "range.kids", label = category.list.names[8],
             min = 0, max = 1, value = c(0, 1))
-sliderInput(inputId = "range.lifestyle.how-to", label = category.list.names[9],
+sliderInput(inputId = "range.lifestyle", label = category.list.names[9],
             min = 0, max = 1, value = c(0, 1))
-sliderInput(inputId = "range.movies", label = category.list.names[10],
+sliderInput(inputId = "range.shortfilms", label = category.list.names[10],
             min = 0, max = 1, value = c(0, 1))
 sliderInput(inputId = "range.music", label = category.list.names[11],
             min = 0, max = 1, value = c(0, 1))
 sliderInput(inputId = "range.news", label = category.list.names[12],
             min = 0, max = 1, value = c(0, 1))
-sliderInput(inputId = "range.sports", label = category.list.names[13],
+sliderInput(inputId = "range.sport", label = category.list.names[13],
             min = 0, max = 1, value = c(0, 1))
 sliderInput(inputId = "range.tech", label = category.list.names[14],
             min = 0, max = 1, value = c(0, 1))
@@ -116,61 +116,62 @@ sliderInput(inputId = "range.tv", label = category.list.names[16],
 sliderInput(inputId = "range.webcam", label = category.list.names[17],
             min = 0, max = 1, value = c(0, 1))
 hr()
+
+sliderValues <- reactive({
+  c(input$range.animals, input$range.auto, input$range.people,
+    input$range.fun, input$range.creation, input$range.school,
+    input$range.videogames, input$range.kids, input$range.lifestyle,
+    input$range.shortfilms, input$range.music, input$range.news,
+    input$range.sport, input$range.tech, input$range.travel,
+    input$range.tv, input$range.webcam)
+})
 ```
+
+```{r}
+actionButton("buttonApplyFilter", "Filter users")
+
+br()
+```
+
 
 #### Export
 ```{r}
 # TODO
-shinyApp( # NOT WORKING
-  ui <- fillPage(
-    inputPanel(
-      downloadButton("buttonExportFilteredUsers", "Export current filtering")
-    )
-  ),
-  
-  server <- function(input, output) {
-    output$buttonExportFilteredUsers <- downloadHandler(
-      filename = function() {
-        #paste("Filtered users", Sys.Date(), ".csv", sep = "")
-        "hej.csv"
-      },
-      content = function(file) {
-        write.csv(values@raw.data, file)
-      }
-    )
+#renderUI({
+  downloadButton("buttonPrint", "Download user list")
+#})
+
+downloadHandler(filename = function() {
+  return(paste("users", ".csv"))
+}, 
+  content = function(file) {
+    #to_save <- dataInput()
+    write.csv(as.data.frame(dataInput()), "users.csv", "text/csv")
   }
 )
+
+# shinyApp( # NOT WORKING
+#   ui <- fillPage(
+#     inputPanel(
+#       downloadButton("buttonExportFilteredUsers", "Export current filtering")
+#     )
+#   ),
+#   
+#   server <- function(input, output) {
+#     output$buttonExportFilteredUsers <- downloadHandler(
+#       filename = function() {
+#         #paste("Filtered users", Sys.Date(), ".csv", sep = "")
+#         "hej.csv"
+#       },
+#       content = function(file) {
+#         write.csv(values@raw.data, file)
+#       }
+#     )
+#   }
+# )
 hr()
 ```
 
-
-Column {data-width=650}
------------------------------------------------------------------------
-
-### Chart Heatmap
-```{r}
-#https://cran.r-project.org/web/packages/d3heatmap/d3heatmap.pdf
-print("bubbles/treemap")
-renderPlot({
-  if (!is.null(values$normalized.data)) {
-      d3heatmap(values$normalized.data, scale = "none", dendrogram = "none", colors = "Blues", show_grid = FALSE, Rowv = FALSE)
-  }
-})
-```
-
-Column {data-width=350}
------------------------------------------------------------------------
-
-### Chart Ridge
-```{r}
-print("Ggridge")
-#ggplot(df.stack, aes(x = values, y = ind)) +
-#  geom_density_ridges(aes(group = ind, color = ind), alpha = 0.3)
-```
-
-
-Statistics
-=====================================
 
 Row
 -----------------------------------------------------------------------
@@ -181,7 +182,7 @@ Row
 # count of all of the unique users that have been seen since the
 # app started. Includes the default user.
 renderValueBox({
-  total.user.count <- nrow(values$raw.data[1])
+  total.user.count <- nrow(values$filtered.view.data)
   valueBox(value = total.user.count, icon = "glyphicon-user")
 })
 ```
@@ -189,25 +190,16 @@ renderValueBox({
 ### Total video views {.value-box}
 ```{r}
 renderValueBox({
-  total.view.count <- 123456 #TODO
+  total.view.count <- sum(values$filtered.view.data) #TODO
   valueBox(value = total.view.count, icon = "glyphicon-play")
 })
 ```
 
-### Average total daily views {.value-box}
-```{r}
-renderValueBox({
-  
-  valueBox(value = 123, icon = "glyphicon-eye-open")
-})
-```
 
-Row
------------------------------------------------------------------------
 ### Most popular category {.value-box}
 ```{r}
 renderValueBox({
-  
+  # TODO: Call function()
   valueBox(value = "Memes", color = "Green", icon = "glyphicon-thumbs-up")
 })
 ```
@@ -215,39 +207,35 @@ renderValueBox({
 ### Least popular category {.value-box}
 ```{r}
 renderValueBox({
-  
+  # TODO: Call function()
   valueBox(value = "News", color = "Maroon", icon = "glyphicon-thumbs-down")
 })
 ```
 
-
-
-Column {data-width=650}
+Column {data-width=350}
 -----------------------------------------------------------------------
 
-### User Interest Statistics
+### Chart Ridge
 ```{r}
+#print("Ggridge")
+ridgeInput <- reactive({
+  values$normalized.data
+})
 
+renderPlot({
+  #print(str(values$normalized.data))
+  #print(values$normalized.data)
+    if (!is.null(ridgeInput())) {
+      print(ridgeInput())
+      #print(stack(as.data.frame(ridgeInput())))
+      print(sliderValues())
+      
+      ggplot(stack(as.data.frame(ridgeInput())), aes(x = values, y = ind)) +
+        geom_density_ridges(aes(group = ind, color = ind), alpha = 0.3) +
+        scale_x_continuous(limits=c(0, 1))
 
-
-# UI function
-#worldPhonesUI <- function(id) {
-#  ns <- NS(id)
-#  fillCol(height = 600, flex = c(NA, 1), 
-#    inputPanel(
-#      selectInput(ns("region"), "Region:", choices = colnames(WorldPhones))
-#    ),
-#    plotOutput(ns("phonePlot"), height = "100%")
-#  )
-#}
-
-# Server function
-#worldPhones <- function(input, output, session) {
-#  output$phonePlot <- renderPlot({
-#    barplot(WorldPhones[,input$region]*1000, 
-#            ylab = "Number of Telephones", xlab = "Year")
-#  })
-#}
-#worldPhonesUI("phones")
-#callModule(worldPhones, "phones")
+      #ggplot(as.data.frame(ridgeInput()), aes(x = values, y = ind)) +
+      #  geom_density_ridges(aes(group = ind, color = ind), alpha = 0.3)
+    }
+})
 ```
