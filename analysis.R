@@ -15,17 +15,11 @@ CountViewsByDates <- function(data.set, dates) {
   test.set <- data.frame(matrix(ncol = 17, nrow = nrow(data.set)))
   colnames(test.set) <- names
   rownames(test.set) <- data.set$user_name
-  #print(test.set)
+
   for (i in 1:nrow(data.set)) {
     test.set[i,] <- lapply(1:17, function(X) length(which(data.set$category_views[[X]][[i]] >= dates[1] & 
                                                             data.set$category_views[[X]][[i]] <= dates[2])))
   }
-  #print("Str: ")
-  #str(test.set)
-  
-  #print("Type: ")
-  #typeof(test.set)
-  print(test.set)
   return(test.set)
 }
 
@@ -36,16 +30,16 @@ NormalizeData <- function(data.set) {
 }
 
 FilterCategories <- function(data.set, filter.list) {
-  #TODO
-  #for (i in 1:17) {
-    print(data.set[1])
-  #}
+  new.set <- as.data.frame(data.set)
+  index <- seq(1, 33, 2)
   
-  #Filter each category according to the filter list
-  #List structure:
-  #lower_limit  upper_limit  category_name
-  #0.3          .94          news
-  #osv...
+  for (i in 1:17) {
+    new.set <- new.set[(new.set[i] >= filter.list[index[i]] & new.set[i] <= filter.list[index[i]+1]), ]
+  }
+  
+  print("new.set end:")
+  print(new.set)
+  return(new.set)
 }
 
 GetFavouriteCategory <- function(data.set, limit) {

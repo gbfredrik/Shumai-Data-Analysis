@@ -32,7 +32,6 @@ observeEvent(input$buttonGetDB,  {
   print("buttonGetDB pressed")
   channel.df <- ImportJSON(input$db.get.link)
   values$raw.data <- channel.df
-  #print(colnames(values$raw.data))
 })
 
 hr()
@@ -50,24 +49,13 @@ dateRangeInput('dateRange',
       start = Sys.Date() - 7, end = Sys.Date(),
       max = Sys.Date()
     )
-
-observeEvent(input$dateRange, {
-  #print(str(input$dateRange))
-  if (!is.null(values$raw.data)) {
-    values$filtered.view.data <- CountViewsByDates(values$raw.data, input$dateRange)
-    #print(values$filtered.view.data)
-    values$normalized.data <- NormalizeData(values$filtered.view.data)
-    #print(values$normalized.data)
-  }
-  },
-  ignoreInit = TRUE
-  )
 ```
 
 #### Categories
+Filter categories by user interest.
 ```{r}
 category.list.names <- c("Animals", "Cars", "Celeb", "Comedy & Entertainment", "Creative", "Education", "Gaming", "Kids", "Lifestyle & How-to", "Movies", "Music", "News", "Sports", "Tech", "Travel", "TV", "Webcam")
-category.list.id <- c("animals", "auto", "people", "fun", "creation", "school", "videogames", "kids", "lifestyle", "shortfilms", "music", "news", "sport", "tech", "travel", "tv", "webcam")
+#category.list.id <- c("animals", "auto", "people", "fun", "creation", "school", "videogames", "kids", "lifestyle", "shortfilms", "music", "news", "sport", "tech", "travel", "tv", "webcam")
 
 # slidersUI <- function(id) {
 #   fluidRow(
@@ -127,10 +115,21 @@ sliderValues <- reactive({
 })
 ```
 
+Apply the chosen filters. 
 ```{r}
 actionButton("buttonApplyFilter", "Filter users")
 
-br()
+observeEvent(input$buttonApplyFilter, {
+  if (!is.null(values$raw.data)) {
+    print("Filtering in if...")
+    values$date.counted.data <- CountViewsByDates(values$raw.data, input$dateRange)
+    values$normalized.data <- NormalizeData(values$date.counted.data)
+    values$filtered.view.data <- FilterCategories(values$normalized.data, sliderValues())
+    
+    #TODO recalc views for remaining users?
+  }
+})
+hr()
 ```
 
 
@@ -141,12 +140,10 @@ br()
   downloadButton("buttonPrint", "Download user list")
 #})
 
-downloadHandler(filename = function() {
-  return(paste("users", ".csv"))
-}, 
+downloadHandler(filename = "user_list.csv", 
   content = function(file) {
     #to_save <- dataInput()
-    write.csv(as.data.frame(dataInput()), "users.csv", "text/csv")
+    write.csv(ridgeInput(), file)
   }
 )
 
@@ -190,7 +187,7 @@ renderValueBox({
 ### Total video views {.value-box}
 ```{r}
 renderValueBox({
-  total.view.count <- sum(values$filtered.view.data) #TODO
+  total.view.count <- sum(values$date.counted.data) #TODO
   valueBox(value = total.view.count, icon = "glyphicon-play")
 })
 ```
@@ -200,7 +197,7 @@ renderValueBox({
 ```{r}
 renderValueBox({
   # TODO: Call function()
-  valueBox(value = "Memes", color = "Green", icon = "glyphicon-thumbs-up")
+  valueBox(value = "news", color = "Green", icon = "glyphicon-thumbs-up")
 })
 ```
 
@@ -208,7 +205,7 @@ renderValueBox({
 ```{r}
 renderValueBox({
   # TODO: Call function()
-  valueBox(value = "News", color = "Maroon", icon = "glyphicon-thumbs-down")
+  valueBox(value = "webcam", color = "Maroon", icon = "glyphicon-thumbs-down")
 })
 ```
 
@@ -219,21 +216,21 @@ Column {data-width=350}
 ```{r}
 #print("Ggridge")
 ridgeInput <- reactive({
-  values$normalized.data
+  values$filtered.view.data
 })
 
 renderPlot({
-  #print(str(values$normalized.data))
-  #print(values$normalized.data)
     if (!is.null(ridgeInput())) {
-      print(ridgeInput())
       #print(stack(as.data.frame(ridgeInput())))
-      print(sliderValues())
-      
-      ggplot(stack(as.data.frame(ridgeInput())), aes(x = values, y = ind)) +
-        geom_density_ridges(aes(group = ind, color = ind), alpha = 0.3) +
-        scale_x_continuous(limits=c(0, 1))
-
+      print("Re-plotting!")
+      ggplot(stack(as.data.frame(ridgeInput())), aes(x = values, y = "Frequency")) +
+        geom_point(alpha = 0.3) +
+        facet_wrap(~ ind)
+        
+        #geom_density_ridges(aes(group = ind, color = ind), alpha = 0.3) +
+        #scale_x_continuous(limits=c(0, 1))
+        #facet_wrap(~ ind)
+        
       #ggplot(as.data.frame(ridgeInput()), aes(x = values, y = ind)) +
       #  geom_density_ridges(aes(group = ind, color = ind), alpha = 0.3)
     }
