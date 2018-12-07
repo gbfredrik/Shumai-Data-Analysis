@@ -9,37 +9,28 @@ runtime: shiny
 
 ```{r setup, include = FALSE}
 source("../setup.R")
-source("../test.R")
+source("../analysis.R")
 source("../support.R")
+values <- reactiveValues()
 ```
 
 
 Setup
 =====================================
 
-[//]: # (Column {data-width=650})
 -----------------------------------------------------------------------
 
 ### Setup Window
-NOTE: Buttons and filters are not fully implemented yet and have thus been disabled.
+Please retrieve the user database first.
 ```{r echo = FALSE}
-
 hr()
-textInput("db.user.name", label = h3("Username"), value = "Enter DB Username...")
-textInput("db.pass", label = h3("Password"), value = "Enter DB Password...")
-actionButton("ConnectToDB", "Connect To Database")
-actionButton("DisconnectFromDB", "Disconnect From Database")
+textInput("db.get.link", label = h3("DB Link"), value = "pumi-4-1.tddc88-2018.ida.liu.se:8085/api/user")
+actionButton("buttonGetDB", "Fetch User Database")
 
-observeEvent(input$ConnectToDB, {
-  print("ConnectToDB button pressed")
-  #mango <- DBConnect(input$db.user.name, input$db.pass)
+observeEvent(input$buttonGetDB,  {
+  channel.df <- ImportJSON(input$db.get.link)
+  values$raw.data <- channel.df
 })
-
-observeEvent(input$DisconnectFromDB, {
-  print("DisconnectFromDB button pressed")
-  #DBDisconnect(mango)
-})
-
 hr()
 ```
 
@@ -58,100 +49,151 @@ dateRangeInput('dateRange',
 ```
 
 #### Categories
+Filter users by interest levels for each category.
 ```{r}
+category.list.names <- c("Animals", "Cars", "Celeb", "Comedy & Entertainment", "Creative", "Education", "Gaming", "Kids", "Lifestyle & How-to", "Movies", "Music", "News", "Sports", "Tech", "Travel", "TV", "Webcam")
+#category.list.id <- c("animals", "auto", "people", "fun", "creation", "school", "videogames", "kids", "lifestyle", "shortfilms", "music", "news", "sport", "tech", "travel", "tv", "webcam")
 
+#Ctrl + Shift + C för att kommentera block
+sliderInput(inputId = "range.animals", label = category.list.names[1],
+            min = 0, max = 1, value = c(0, 1))
+sliderInput(inputId = "range.auto", label = category.list.names[2],
+            min = 0, max = 1, value = c(0, 1))
+sliderInput(inputId = "range.people", label = category.list.names[3],
+            min = 0, max = 1, value = c(0, 1))
+sliderInput(inputId = "range.fun", label = category.list.names[4],
+            min = 0, max = 1, value = c(0, 1))
+sliderInput(inputId = "range.creation", label = category.list.names[5],
+            min = 0, max = 1, value = c(0, 1))
+sliderInput(inputId = "range.school", label = category.list.names[6],
+            min = 0, max = 1, value = c(0, 1))
+sliderInput(inputId = "range.videogames", label = category.list.names[7],
+            min = 0, max = 1, value = c(0, 1))
+sliderInput(inputId = "range.kids", label = category.list.names[8],
+            min = 0, max = 1, value = c(0, 1))
+sliderInput(inputId = "range.lifestyle", label = category.list.names[9],
+            min = 0, max = 1, value = c(0, 1))
+sliderInput(inputId = "range.shortfilms", label = category.list.names[10],
+            min = 0, max = 1, value = c(0, 1))
+sliderInput(inputId = "range.music", label = category.list.names[11],
+            min = 0, max = 1, value = c(0, 1))
+sliderInput(inputId = "range.news", label = category.list.names[12],
+            min = 0, max = 1, value = c(0, 1))
+sliderInput(inputId = "range.sport", label = category.list.names[13],
+            min = 0, max = 1, value = c(0, 1))
+sliderInput(inputId = "range.tech", label = category.list.names[14],
+            min = 0, max = 1, value = c(0, 1))
+sliderInput(inputId = "range.travel", label = category.list.names[15],
+            min = 0, max = 1, value = c(0, 1))
+sliderInput(inputId = "range.tv", label = category.list.names[16],
+            min = 0, max = 1, value = c(0, 1))
+sliderInput(inputId = "range.webcam", label = category.list.names[17],
+            min = 0, max = 1, value = c(0, 1))
+hr()
+
+sliderValues <- reactive({
+  c(input$range.animals, input$range.auto, input$range.people,
+    input$range.fun, input$range.creation, input$range.school,
+    input$range.videogames, input$range.kids, input$range.lifestyle,
+    input$range.shortfilms, input$range.music, input$range.news,
+    input$range.sport, input$range.tech, input$range.travel,
+    input$range.tv, input$range.webcam)
+})
+```
+
+Apply the chosen filters. 
+```{r}
+actionButton("buttonApplyFilter", "Filter users")
+
+observeEvent(input$buttonApplyFilter, {
+  if (!is.null(values$raw.data)) {
+    values$date.counted.data <- CountViewsByDates(values$raw.data, input$dateRange)
+    values$normalized.data <- NormalizeData(values$date.counted.data)
+    values$filtered.view.data <- FilterCategories(values$normalized.data, sliderValues())
+    
+    values$top_category <- GetTopCategory(values$filtered.view.data, 0.95)
+    values$bottom_category <- GetWorstCategory(values$filtered.view.data, 0.01)
+    #TODO recalc views for remaining users?
+  }
+})
 hr()
 ```
 
+
 #### Export
+Export the current selection of users. 
 ```{r}
-actionButton("ExportFilteredUsers", "Export current filtering")
+downloadButton("buttonPrint", "Download user list")
+
+downloadHandler(filename = "user_list.csv", 
+  content = function(file) {
+    write.csv(ridgeInput(), file)
+  }
+)
+hr()
 ```
 
-
-
-Column {data-width=650}
------------------------------------------------------------------------
-
-### Chart 1A
-
-```{r}
-#https://cran.r-project.org/web/packages/d3heatmap/d3heatmap.pdf
-
-d3heatmap(dt1, scale = "none", dendrogram = "none", colors = "Blues", show_grid = FALSE, Rowv = FALSE)
-```
-
-Column {data-width=350}
------------------------------------------------------------------------
-
-### Chart 1B
-
-```{r}
-
-```
-
-### Chart 1C
-
-```{r}
-
-```
-
-
-Statistics
-=====================================
 
 Row
 -----------------------------------------------------------------------
-### Unique users {.value-box}
 
+### Unique users {.value-box}
 ```{r}
-# usrCount is a reactive expression that keeps an approximate
+# total.user.count is a reactive expression that keeps an approximate
 # count of all of the unique users that have been seen since the
-# app started.
-usrCount <- ncol(dfscaled)
+# app started. Includes the default user.
 renderValueBox({
-  valueBox(value = usrCount, icon = "glyphicon-user")
+  total.user.count <- nrow(values$filtered.view.data)
+  valueBox(value = total.user.count, icon = "glyphicon-user")
 })
 ```
 
 ### Total video views {.value-box}
 ```{r}
 renderValueBox({
-  views <- 123456
-  valueBox(value = views, icon = "glyphicon-play")
+  total.view.count <- sum(values$date.counted.data) #TODO
+  valueBox(value = total.view.count, icon = "glyphicon-play")
 })
 ```
 
-### Average total daily views {.value-box}
-```{r}
-renderValueBox({
-  valueBox(value = 123, icon = "glyphicon-eye-open")
-})
-```
 
-Row
------------------------------------------------------------------------
 ### Most popular category {.value-box}
 ```{r}
 renderValueBox({
-  valueBox(value = "Memes", color = "Green", icon = "glyphicon-thumbs-up")
+  # TODO: Call function()
+  valueBox(value = values$top_category, color = "Green", icon = "glyphicon-thumbs-up")
 })
 ```
 
 ### Least popular category {.value-box}
 ```{r}
 renderValueBox({
-  valueBox(value = "News", color = "Maroon", icon = "glyphicon-thumbs-down")
+  # TODO: Call function()
+  valueBox(value = values$bottom_category, color = "Maroon", icon = "glyphicon-thumbs-down")
 })
 ```
 
-
-
-Column {data-width=650}
+Column {data-width=350}
 -----------------------------------------------------------------------
 
-### User Interest Statistics
-
+### Chart Point
 ```{r}
+ridgeInput <- reactive({
+  values$filtered.view.data
+})
 
+renderPlot({
+    if (!is.null(ridgeInput())) {
+      ggplot(stack(as.data.frame(ridgeInput())), aes(x = values, y = "Frequency")) +
+        geom_point(alpha = 0.3) +
+        facet_wrap(~ ind)
+        
+        #geom_density_ridges(aes(group = ind, color = ind), alpha = 0.3) +
+        #scale_x_continuous(limits=c(0, 1))
+        #facet_wrap(~ ind)
+        
+      #ggplot(as.data.frame(ridgeInput()), aes(x = values, y = ind)) +
+      #  geom_density_ridges(aes(group = ind, color = ind), alpha = 0.3)
+    }
+})
 ```

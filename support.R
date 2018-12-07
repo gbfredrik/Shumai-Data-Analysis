@@ -1,30 +1,22 @@
-#This file hosts the support functions for the data analysis
+# This file hosts the support functions for the data analysis
 
-#This functions saves a variable or data set to a .csv file as specified by the outputFileName parameter.
-SaveData <- function(data.Name, separator, output.File.Name) {
-  fwrite(data.Name, file = output.File.Name, sep = separator)
-}
-
-DBConnect <- function(user, pass) {
-  URI <- paste0("mongodb://", user, ":", pass, "@pumi-4-1.tddc88-2018.ida.liu.se:27017/newz")
-  mango = mongo(url = URI)
-  #url format: "mongodb://[username:password@]host1[:port1][,host2[:port2],...[/[database][?options]]"
-  print("Connected")
-  return(mango)
-}
-
-DBDisconnect <- function(db.env) {
-  db.env$disconnect()
-  print("Discon")
-}
-
-DBPrintAll <- function(db.env) {
-  db.env$find('{}')
-}
-
-ImportJSON <- function() {
-  selected.file <- file.choose()
-  print(selected.file)
-  channel.df <- fromJSON(selected.file)
-  return(channel.df)
+# This function imports the data from the given link parameter, parse the dates, and returns the data set.
+ImportJSON <- function(link) {
+  #selected.file <- file.choose()
+  #print(selected.file)
+  text <- readLines(curl(link))
+  data <- fromJSON(text)
+  
+  # Parse and convert dates
+  #data$category_views <- list(data[6]$category_views[[1]]$viewed)
+  
+  scaleFunc <- function(x) {
+    return(as.Date(substring(x, 0, 10)))
+  }
+  
+  for (temp in 1:17) {
+    data$category_views[[temp]] <- lapply(data$category_views[[temp]], scaleFunc)
+  }
+  
+  return(data)
 }
