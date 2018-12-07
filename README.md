@@ -12,4 +12,4 @@
 * **dashboard.Rmd**: Main file that launches the dashboard and calls the required functions.
 * **setup.R**: Used to install and load required packages.
 * **support.R**: Handles supporting functions. Currently only used to load the data from the database. 
-* **analysis.R**: Handles all data analysis. Process the data, performs necessary calculations and returns the results for presentation in the dashboard. 
+* **analysis.R**: Handles all data analysis. Processes the data, performs necessary calculations and returns the results for presentation in the dashboard. 
