@@ -1,11 +1,6 @@
-#This file hosts the support functions for the data analysis
+# This file hosts the support functions for the data analysis
 
-#This functions saves a variable or data set to a .csv file as specified by the outputFileName parameter.
-SaveData <- function(data.Name, separator, output.File.Name) {
-  fwrite(data.Name, file = output.File.Name, sep = separator)
-}
-
-
+# This function imports the data from the given link parameter, parse the dates, and returns the data set.
 ImportJSON <- function(link) {
   #selected.file <- file.choose()
   #print(selected.file)

@@ -2,10 +2,10 @@
 
 #Install a list of required packages.
 #Method used: https://stackoverflow.com/questions/4090169/elegant-way-to-check-for-missing-packages-and-install-them
-list.of.packages <- c("mongolite", "flexdashboard", "d3heatmap", "ggridges", "jsonlite", "curl")
+list.of.packages <- c("mongolite", "flexdashboard", "d3heatmap", "ggridges", "jsonlite", "curl") # Required.
 
-new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[, "Package"])]
-if (length(new.packages)) install.packages(new.packages, quiet = FALSE, repos = "http://cran.us.r-project.org")
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[, "Package"])] # Missing packages. 
+if (length(new.packages)) install.packages(new.packages, quiet = FALSE, repos = "http://cran.us.r-project.org") # Installs the missing packages.
 
 
 #Loads the namespaces of each package. Can only load/attach INSTALLED packages, handled above in this file!

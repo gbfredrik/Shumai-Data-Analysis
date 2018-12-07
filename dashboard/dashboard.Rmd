@@ -27,13 +27,10 @@ hr()
 textInput("db.get.link", label = h3("DB Link"), value = "pumi-4-1.tddc88-2018.ida.liu.se:8085/api/user")
 actionButton("buttonGetDB", "Fetch User Database")
 
-#fetchDB <- eventReactive(input$buttonGetDB, {
 observeEvent(input$buttonGetDB,  {
-  print("buttonGetDB pressed")
   channel.df <- ImportJSON(input$db.get.link)
   values$raw.data <- channel.df
 })
-
 hr()
 ```
 
@@ -52,21 +49,10 @@ dateRangeInput('dateRange',
 ```
 
 #### Categories
-Filter categories by user interest.
+Filter users by interest levels for each category.
 ```{r}
 category.list.names <- c("Animals", "Cars", "Celeb", "Comedy & Entertainment", "Creative", "Education", "Gaming", "Kids", "Lifestyle & How-to", "Movies", "Music", "News", "Sports", "Tech", "Travel", "TV", "Webcam")
 #category.list.id <- c("animals", "auto", "people", "fun", "creation", "school", "videogames", "kids", "lifestyle", "shortfilms", "music", "news", "sport", "tech", "travel", "tv", "webcam")
-
-# slidersUI <- function(id) {
-#   fluidRow(
-#       lapply(seq(category.list.id), function(i) {
-#       sliderInput(inputId = paste0("range.", category.list.id[i]),
-#       label = category.list.names[i],
-#       min = 0, max = 1, value = c(0, 1))
-#     })
-#   )
-# }
-# slidersUI("slide")
 
 #Ctrl + Shift + C för att kommentera block
 sliderInput(inputId = "range.animals", label = category.list.names[1],
@@ -121,11 +107,12 @@ actionButton("buttonApplyFilter", "Filter users")
 
 observeEvent(input$buttonApplyFilter, {
   if (!is.null(values$raw.data)) {
-    print("Filtering in if...")
     values$date.counted.data <- CountViewsByDates(values$raw.data, input$dateRange)
     values$normalized.data <- NormalizeData(values$date.counted.data)
     values$filtered.view.data <- FilterCategories(values$normalized.data, sliderValues())
     
+    values$top_category <- GetTopCategory(values$filtered.view.data, 0.95)
+    values$bottom_category <- GetWorstCategory(values$filtered.view.data, 0.01)
     #TODO recalc views for remaining users?
   }
 })
@@ -134,38 +121,15 @@ hr()
 
 
 #### Export
+Export the current selection of users. 
 ```{r}
-# TODO
-#renderUI({
-  downloadButton("buttonPrint", "Download user list")
-#})
+downloadButton("buttonPrint", "Download user list")
 
 downloadHandler(filename = "user_list.csv", 
   content = function(file) {
-    #to_save <- dataInput()
     write.csv(ridgeInput(), file)
   }
 )
-
-# shinyApp( # NOT WORKING
-#   ui <- fillPage(
-#     inputPanel(
-#       downloadButton("buttonExportFilteredUsers", "Export current filtering")
-#     )
-#   ),
-#   
-#   server <- function(input, output) {
-#     output$buttonExportFilteredUsers <- downloadHandler(
-#       filename = function() {
-#         #paste("Filtered users", Sys.Date(), ".csv", sep = "")
-#         "hej.csv"
-#       },
-#       content = function(file) {
-#         write.csv(values@raw.data, file)
-#       }
-#     )
-#   }
-# )
 hr()
 ```
 
@@ -197,7 +161,7 @@ renderValueBox({
 ```{r}
 renderValueBox({
   # TODO: Call function()
-  valueBox(value = "news", color = "Green", icon = "glyphicon-thumbs-up")
+  valueBox(value = values$top_category, color = "Green", icon = "glyphicon-thumbs-up")
 })
 ```
 
@@ -205,24 +169,21 @@ renderValueBox({
 ```{r}
 renderValueBox({
   # TODO: Call function()
-  valueBox(value = "webcam", color = "Maroon", icon = "glyphicon-thumbs-down")
+  valueBox(value = values$bottom_category, color = "Maroon", icon = "glyphicon-thumbs-down")
 })
 ```
 
 Column {data-width=350}
 -----------------------------------------------------------------------
 
-### Chart Ridge
+### Chart Point
 ```{r}
-#print("Ggridge")
 ridgeInput <- reactive({
   values$filtered.view.data
 })
 
 renderPlot({
     if (!is.null(ridgeInput())) {
-      #print(stack(as.data.frame(ridgeInput())))
-      print("Re-plotting!")
       ggplot(stack(as.data.frame(ridgeInput())), aes(x = values, y = "Frequency")) +
         geom_point(alpha = 0.3) +
         facet_wrap(~ ind)
