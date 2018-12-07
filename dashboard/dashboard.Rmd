@@ -8,6 +8,7 @@ runtime: shiny
 ---
 
 ```{r setup, include = FALSE}
+# Setup options. Loads required packages, scripts and initiates the reactive variable "values".
 source("../setup.R")
 source("../analysis.R")
 source("../support.R")
@@ -17,8 +18,6 @@ values <- reactiveValues()
 
 Setup
 =====================================
-
------------------------------------------------------------------------
 
 ### Setup Window
 Please retrieve the user database first.
@@ -38,6 +37,8 @@ Trends
 =====================================
 Settings {.sidebar}
 -----------------------------------------------------------------------
+Click Apply below to filter the users.
+
 #### Time period
 Select the time period to analyze.
 ```{r echo = FALSE}
@@ -113,7 +114,9 @@ observeEvent(input$buttonApplyFilter, {
     
     values$top_category <- GetTopCategory(values$filtered.view.data, 0.95)
     values$bottom_category <- GetWorstCategory(values$filtered.view.data, 0.01)
+    
     #TODO recalc views for remaining users?
+    values$view.data.after.filter <- FilterViewsAFterFilters(values$date.counted.data, values$filtered.view.data)
   }
 })
 hr()
@@ -141,7 +144,7 @@ Row
 ```{r}
 # total.user.count is a reactive expression that keeps an approximate
 # count of all of the unique users that have been seen since the
-# app started. Includes the default user.
+# app started. Includes the default user and any users with more than one view.
 renderValueBox({
   total.user.count <- nrow(values$filtered.view.data)
   valueBox(value = total.user.count, icon = "glyphicon-user")
@@ -150,8 +153,9 @@ renderValueBox({
 
 ### Total video views {.value-box}
 ```{r}
+# Total number of views for the filtered users. 
 renderValueBox({
-  total.view.count <- sum(values$date.counted.data) #TODO
+  total.view.count <- sum(values$view.data.after.filter)
   valueBox(value = total.view.count, icon = "glyphicon-play")
 })
 ```
@@ -159,16 +163,16 @@ renderValueBox({
 
 ### Most popular category {.value-box}
 ```{r}
+# Category favorited (approximately) by the most users. 
 renderValueBox({
-  # TODO: Call function()
   valueBox(value = values$top_category, color = "Green", icon = "glyphicon-thumbs-up")
 })
 ```
 
 ### Least popular category {.value-box}
 ```{r}
+# Category favorited (approximately) by the lowest number users. 
 renderValueBox({
-  # TODO: Call function()
   valueBox(value = values$bottom_category, color = "Maroon", icon = "glyphicon-thumbs-down")
 })
 ```
@@ -184,9 +188,10 @@ ridgeInput <- reactive({
 
 renderPlot({
     if (!is.null(ridgeInput())) {
-      ggplot(stack(as.data.frame(ridgeInput())), aes(x = values, y = "Frequency")) +
-        geom_point(alpha = 0.3) +
-        facet_wrap(~ ind)
+      if (nrow(ridgeInput()) != 0) {
+        ggplot(stack(as.data.frame(ridgeInput())), aes(x = values, y = "Frequency")) +
+          geom_point(alpha = 0.3) +
+          facet_wrap(~ ind)
         
         #geom_density_ridges(aes(group = ind, color = ind), alpha = 0.3) +
         #scale_x_continuous(limits=c(0, 1))
@@ -194,6 +199,7 @@ renderPlot({
         
       #ggplot(as.data.frame(ridgeInput()), aes(x = values, y = ind)) +
       #  geom_density_ridges(aes(group = ind, color = ind), alpha = 0.3)
+      }
     }
 })
 ```
